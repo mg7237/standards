@@ -1,0 +1,28 @@
+{
+    "name": "standards",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js",
+        "docs": "docsify serve docs",
+        "prettier:docs": "prettier --write docs"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "docsify": "^4.12.2",
+        "docsify-cli": "^4.4.4",
+        "nodemon": "^2.0.15",
+        "prettier": "^2.6.1"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "dotenv": "^16.0.0",
+        "ejs": "^3.1.6",
+        "express": "^4.17.3",
+        "mongoose": "^6.2.9"
+    }
+}

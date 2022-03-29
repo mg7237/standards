@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Document</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="description" content="Description" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+        <link
+            id="link-theme-dark"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css"
+        />
+        <link
+            id="link-theme-light"
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css"
+        />
+        <script>
+            function setTheme(theme) {
+                const darkTheme = document.getElementById("link-theme-dark");
+                const lightTheme = document.getElementById("link-theme-light");
+                localStorage.setItem("theme", theme);
+                if (theme === "dark") {
+                    darkTheme.removeAttribute("disabled");
+                    lightTheme.setAttribute("disabled", "");
+                } else {
+                    lightTheme.removeAttribute("disabled");
+                    darkTheme.setAttribute("disabled", "");
+                }
+            }
+            var theme = localStorage.getItem("theme") || "light";
+            setTheme(theme);
+        </script>
+        <style>
+            :root {
+                /* Reduce the font size */
+                --base-font-size: 14px;
+
+                /* Change the theme color hue */
+                /* --theme-hue: 325; */
+            }
+
+            #theme-toggle {
+                color: var(--theme-color);
+                font-size: 0.9rem;
+                position: sticky;
+                bottom: 0;
+                z-index: 1000;
+                left: 0;
+                cursor: pointer;
+                padding: 0.5rem 25px;
+            }
+
+            body.close #theme-toggle {
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">Please wait...</div>
+        <div id="theme-toggle">Toggle Theme</div>
+        <script>
+            window.$docsify = {
+                mergeNavbar: true,
+                name: "[Module Name] Standards",
+                loadSidebar: true,
+                subMaxLevel: 3,
+                loadNavbar: true,
+                themeable: {},
+                auto2top: true,
+                copyCode: {
+                    buttonText: "Copy",
+                    errorText: "Error!",
+                    successText: "Copied!",
+                },
+                search: {
+                    namespace: "[module-name]",
+                },
+                autoFooter: {
+                    name: "Saarthi Pedagogy Private Limited",
+                    copyYear: 2021,
+                    url: "https://www.saarthipedagogy.com/",
+                },
+            };
+        </script>
+        <!-- Docsify v4 -->
+        <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+        <!-- Search Plugin -->
+        <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+        <!-- Emoji Plugin -->
+        <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
+        <!-- Zoom Image Plugin -->
+        <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+        <!-- Auto Footer Plugin -->
+        <script src="https://cdn.jsdelivr.net/npm/@markbattistella/docsify-sidebarfooter@latest"></script>
+        <!-- Copy Code Plugin v2 -->
+        <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+        <!-- docsify-themeable (latest v0.x.x) -->
+        <script src="//cdn.jsdelivr.net/npm/docsify-themeable"></script>
+        <script>
+            var themeToggler = document.getElementById("theme-toggle");
+            themeToggler.addEventListener("click", () => {
+                let currentTheme = localStorage.getItem("theme") || "light";
+                setTheme(currentTheme === "light" ? "dark" : "light");
+            });
+        </script>
+    </body>
+</html>

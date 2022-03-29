@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Saarthi Pedagogy Standards</title>
+    </head>
+
+    <body>
+        <h1>Saarthi Pedagogy Standards - Documentations</h1>
+        <% if(user) { %>
+        <p>
+            Logged In : <%= user.name %>
+            <button onclick="localStorage.clear();">Clear Search Cache</button>
+            <a href="/logout"><button>Logout</button></a>
+        </p>
+        <% console.log(user); if(user?.superadmin || (user.docsPermissions &&
+        user.docsPermissions.length)) { const docLinks = user.superadmin ?
+        Object.entries(docs).map(entry => { return {url: entry[0], display: entry[1]}}) :
+        user.docsPermissions.map(doc=> { return docs[doc] ? { url: doc, display: docs[doc] } : null;
+        }).filter(doc => !!doc); %>
+        <ul>
+            <% for (let link of docLinks) { %>
+            <li>
+                <a href="/docs/<%= link.url %>/"> <%= link.display %> </a>
+            </li>
+            <% } %>
+        </ul>
+        <% } else { %>
+        <p>Sorry, you do not have permission to view the docs.</p>
+        <% } %> <% } else { %>
+        <h3>Login</h3>
+        <form method="POST" action="/login">
+            <input type="email" name="email" placeholder="email" required />
+            <input type="password" name="password" placeholder="password" required />
+            <button>Login</button>
+        </form>
+        <% } %>
+    </body>
+</html>

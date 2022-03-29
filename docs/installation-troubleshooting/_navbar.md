@@ -1,0 +1,2 @@
+-   <a href="/">All Docs</a>
+-   [Installation & Troubleshooting](/)
