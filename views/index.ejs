@@ -15,11 +15,10 @@
             <button onclick="localStorage.clear();">Clear Search Cache</button>
             <a href="/logout"><button>Logout</button></a>
         </p>
-        <% console.log(user); if(user?.superadmin || (user.docsPermissions &&
-        user.docsPermissions.length)) { const docLinks = user.superadmin ?
-        Object.entries(docs).map(entry => { return {url: entry[0], display: entry[1]}}) :
-        user.docsPermissions.map(doc=> { return docs[doc] ? { url: doc, display: docs[doc] } : null;
-        }).filter(doc => !!doc); %>
+        <% if(user?.superadmin || (user.docsPermissions && user.docsPermissions.length)) { const
+        docLinks = user.superadmin ? Object.entries(docs).map(entry => { return {url: entry[0],
+        display: entry[1]}}) : user.docsPermissions.map(doc=> { return docs[doc] ? { url: doc,
+        display: docs[doc] } : null; }).filter(doc => !!doc); %>
         <ul>
             <% for (let link of docLinks) { %>
             <li>
