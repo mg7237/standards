@@ -9,7 +9,7 @@
 -   <a href="/node">Node.js</a>
 -   <a href="/mongodb">MongoDB</a>
 -   <a href="/redis">Redis</a>
--   <a href="/redis">Flutter</a>
+-   <a href="/flutter">Flutter</a>
 -   <a href="/graphics-design">Graphics Design</a>
 
 ## Roadmap

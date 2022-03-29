@@ -1,7 +1,6 @@
-# Topics - Git
+# Topics - Flutter
 
-<br>
-<img src="assets/git.png" alt="Git Logo" width="150" style="border-radius:5px" />
+![Tutorial](assets/flutter.png)
 
 Website : _https://git-scm.com/_
 
