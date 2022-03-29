@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import { getUser } from "../helpers/session.js";
 import { fileURLToPath } from "url";
 import { join, dirname } from "path";
