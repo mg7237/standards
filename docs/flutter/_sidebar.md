@@ -1,7 +1,7 @@
 -   [Topics](/)
 -   [Introduction](/introduction)
--   [Architecture](/architecture)
--   [Breaking the Myths](/breaking-myths)
--   [GitHub](/github)
+-   [Coding Standards](/coding-standards)
+-   [Code Metrics](/code-metrics)
+-   [Getx State Management](/getx)
 
 <footer id="mb-footer"></footer>

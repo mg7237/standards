@@ -4,7 +4,7 @@
 
 Website : _https://git-scm.com/_
 
--   [Introduction](/introduction)
--   [Architecture](/architecture)
--   [Breaking the Myths](/breaking-myths)
--   [GitHub](/github)
+1.  [Introduction](/introduction)
+1.  [Coding Standards](/coding-standards)
+1.  [Code Metrics](/code-metrics)
+1.  [Getx State Management](/getx)
