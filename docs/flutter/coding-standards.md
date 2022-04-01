@@ -6,7 +6,9 @@ Coding Standards to be used for Dart/Flutter code:
 
 -   [Naming Conventions](#naming-conventions)
 -   [Code Comments](#code-comments)
--   [Date Type](#date-type)
+-   [Handling Widget Size](#handling-widget-size)
+-   [Handling Color And Text Style](#handling-color-and-text-style)
+-   [Handling `Date` Type](#handling-date-type)
 -   [Imports](#imports)
 -   [Null safe and Null aware](#null-safe-and-null-aware)
 -   [as vs is](#as-vs-is)
@@ -41,7 +43,15 @@ Coding Standards to be used for Dart/Flutter code:
 
 -   Avoid commenting UI widgets as in most cases these are self explanatory.
 
-### Date Type
+### Handling Widget Size
+
+Use `flutter_screenutil` package to define relative sizes i.e. height, width, padding, margin, font size, % of screen width, % of screen height etc. **No Hard Coding** of any attributes to be done in UI widget design.
+
+### Handling Color And Text Style
+
+`theme` folder under `lib` contains `colors.dart` and `style.dart` which define standard colors and text styles to be used across application. **No Hard Coding** of `TextStyle` or `Colors` should be done within UI widget design.
+
+### Handling Date Type
 
 To send/receive data of type **date** across API's, dates should be converted to string representing date-time in **UTC** (Zulu Time). For example date value is represented as `"2022-03-08T05:07:21.858Z"` which implies UTC date time equivalent to 08-March-2022, 05H:07M:21S and 858ms. Use `dateVariable.toUtc().toIso8601String()` to convert date to String and `DateTime.parse(dateVariable).toLocal()` to convert to string to local date time object.
 
