@@ -1,6 +1,6 @@
 # Coding Standards
 
-Best practices are **professional standards** that are acceptable in a field and it’s very important for any programing language to improve code quality, readability, maintainability, and robustness.
+Best practices are **professional standards** that are acceptable in a field and it’s very important for any programing language to improve code quality, readability, maintainability, and robustness. Refer [Effective Dart](https://dart.dev/guides/language/effective-dart) which details most of the standards suggested here.
 
 Coding Standards to be used for Dart/Flutter code:
 
@@ -20,6 +20,7 @@ Coding Standards to be used for Dart/Flutter code:
 -   [Avoid String `+`](#avoid-string-+)
 -   [Asynchronous Calls](#asynchronous-calls)
 -   [`Const` Widgets](#const-widgets)
+-   [Code Design](code-design)
 
 ### Naming Conventions
 
@@ -32,6 +33,10 @@ Coding Standards to be used for Dart/Flutter code:
 -   All private variables, constants should be prefixed with `_`.
 
 ### Code Comments
+
+Flutter team recommends to keep the comments short, in most cases it would be one liner unless you are describing a class or package<br>
+
+Use inline commenting `//` instead of block comment `/* Lorem Ipsum */` and use `///` style which will automatically be picked up for generating code documentation. Guidelines:
 
 -   All Primitive variables, constants, named parameters, lists, maps should have a brief one liner comment explaining purpose of the variable and where required elaborate on state event life of variable (must for Boolean).
 
@@ -103,3 +108,8 @@ Use `async`/`await` over Future callback. It improves readability and maintenanc
 ### `Const` Widgets
 
 If a widget will not change on `setState` call then we should define it as constant. It will prevent the widget to rebuild so it improves performance.
+
+### Code Design
+
+Guidelines for writing consistent, usable APIs for libraries can be found [here](https://dart.dev/guides/language/effective-dart/design)<br>
+The page covers best practices for naming variables, classes, methods and writing readable and maintainable code.
