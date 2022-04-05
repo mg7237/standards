@@ -11,6 +11,9 @@ GetX has three basic principles on which it is built:
 
 -   [UI Widgets](#ui-widgets)
 -   [Controllers](#controllers)
+-   [Get Navigation](#navigation)
+-   [Other Features](#other-features)
+-   [Complete Example](#complete-examples)
 -   [References](#references)
 
 ### UI Widgets
@@ -39,6 +42,179 @@ RxList<String> myList = [].obs;
 RxMap<String, String> myMap = <String, String>{}.obs;
 Rx<MyAwsomeObject> = MyAwsomeObject().obs;
 ...
+```
+
+### Get Navigation
+
+Flutter provides Navigator.push method which requires context to move from one screen to another. Getx provides a simple Navigation mechanism as below
+
+```
+Get.to(Home());     // Navigate to Home Screen; equivalent of Navigator.push
+Get.back();         // Move back to previous screen equivalent to Navigator.pop
+Get.toNamed('/second'), // for named routes
+Get.offAndToNamed('/second'), // to close, then navigate to named route
+
+```
+
+### Other Features
+
+-   **Snackbars**
+
+```
+Get.snackbar(
+   'title',
+   'message',
+   snackPosition: SnackPosition.BOTTOM,
+colorText: Colors.white,
+backgroundColor: Colors.black,
+borderColor: Colors.white);
+```
+
+-   **Dialogs**
+
+```
+Get.defaultDialog(
+   radius: 10.0,
+   contentPadding: const EdgeInsets.all(20.0),
+   title: 'title',
+   middleText: 'content',
+   textConfirm: 'Okay',
+   confirm: OutlinedButton.icon(
+     onPressed: () => Get.back(),
+     icon: const Icon(
+       Icons.check,
+       color: Colors.blue,     ),
+     label: const Text('Okay',
+       style: TextStyle(color: Colors.blue),
+     ),   ),
+ cancel: OutlinedButton.icon(
+     onPressed: (){},
+     icon: Icon(),
+     label: Text(),),);
+```
+
+**Bottom Sheets**
+
+```
+Get.bottomSheet(
+   Container(
+ height: 150,
+ color: AppColors.spaceBlue,
+ child: Center(
+     child: Text(
+   'Count has reached ${obxCount.value.toString()}',
+   style: const TextStyle(fontSize: 28.0, color: Colors.white),
+ )),
+));
+```
+
+### Complete Examples
+
+**Counter APP implemented using Getx**
+
+```
+// Update pubspec.yaml to include Getx plugin
+$ flutter pub add get
+...
+// Add following import in all dart files using getx
+import 'package:get/get.dart';
+
+```
+
+**Controller Options:**
+
+```
+// Option 1 Controller extends Getx Controller and uses update method
+class Controller extends GetxController {
+  var count = 0;
+  void increment() {
+    count++;
+    update(); // Updates all dependent widgets
+  }
+}
+
+// Option 2 controller extends Getx Controller and properties are marked observable
+class Controller extends GetxController {
+  var count = 0.obs;
+  void increment() {
+    count++;
+  }
+}
+
+```
+
+**UI Screen using Obx function and Navigation**
+
+```
+class Home extends StatelessWidget {
+  final controller = Get.put(Controller());
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("counter")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Obx(() => Text(
+                      'clicks: ${controller.count}',    // Update to Text Value on change of count
+                    )),
+            ElevatedButton(
+              child: Text('Next Route'),
+              onPressed: () {
+                Get.to(Second());   // Get Navigation without context
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: controller.increment(),
+          ),
+    );
+  }
+}
+class Second extends StatelessWidget {
+  final Controller ctrl = Get.find();
+  // Both Home and Second use same conroller,
+  // to get same instance of the controller, use Get.find() insteaad of Get.put()
+  @override
+  Widget build(context){
+     return Scaffold(body: Center(child: Text("${ctrl.count}")));
+  }
+}
+```
+
+**UI Screen using GetBuilder function**
+
+```
+
+class Home extends StatelessWidget {
+  final controller = Get.put(Controller());
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("counter")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GetBuilder<Controller>(
+                builder: (_) => Text(
+                      'clicks: ${controller.count}', // Updates Text value whenever there is change in controller count value
+                    )),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: controller.increment(), // Call controller increment method
+          ),
+    );
+  }
+}
+
 ```
 
 ### References

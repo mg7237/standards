@@ -43,18 +43,28 @@ Identifies long methods and long Parameter Lists which are recommended to be ref
 
 -   To configure the package add a `dart_code_metrics` entry to `analysis_options.yaml`. This configuration is used by both CLI and the analyzer plugin. <br>
 
+Sample code metrics rule configuration
+
 ```
 dart_code_metrics:
-metrics:
- - ... # configures the list of reported metrics
- metrics-exclude:
- - ... # configures the list of files that should be ignored by metrics
- rules:
- - ... # configures the list of rules
- rules-exclude:
- - ... # configures the list of files that should be ignored by rules
- anti-patterns:
- - ... # configures the list of anti-patterns
+  anti-patterns:
+    - long-method
+    - long-parameter-list
+  metrics:
+    cyclomatic-complexity: 20
+    maximum-nesting-level: 5
+    number-of-parameters: 4
+    source-lines-of-code: 50
+  metrics-exclude:
+    - test/**
+  rules:
+    - newline-before-return
+    - no-boolean-literal-compare
+    - no-empty-block
+    - prefer-trailing-comma
+    - prefer-conditional-expressions
+    - no-equal-then-else
+
 ```
 
 -   Find More details [here](https://dartcodemetrics.dev/docs/getting-started/configuration)
@@ -70,6 +80,82 @@ Following is the command line statement which can be used to run the code metric
 -   `analyze`: Reports code metrics, rules and anti-patterns violations.
 -   `check-unused-files`: Checks unused \*.dart files.
 -   `check-unused-code`: Checks unused code in \*.dart files.
+
+**Analyze Code**
+
+-   Following is the sample output of code metrics analysis on console
+
+```
+$ flutter pub run dart_code_metrics:metrics analyze lib
+
+WARNING Prefer trailing comma.
+        lib/screens/teach/classwork/submission.dart:460:13
+        prefer-trailing-comma : https://dartcodemetrics.dev/docs/rules/common/prefer-trailing-comma
+
+WARNING Prefer trailing comma.
+        lib/screens/teach/classwork/submission.dart:474:19
+        prefer-trailing-comma : https://dartcodemetrics.dev/docs/rules/common/prefer-trailing-comma
+
+WARNING Then and else branches are equal.
+        lib/screens/teach/classwork/submission.dart:478:25
+        no-equal-then-else : https://dartcodemetrics.dev/docs/rules/common/no-equal-then-else
+
+ALARM   StudentSubmissionCard.build
+        cyclomatic complexity: 54
+
+
+lib/screens/teach/classwork/upload_classwork_2.dart:
+STYLE   Block is empty. Empty blocks are often indicators of missing code.
+        lib/screens/teach/classwork/upload_classwork_2.dart:88:68
+        no-empty-block : https://dartcodemetrics.dev/docs/rules/common/no-empty-block
+```
+
+-   Following is the sample out of code metrics analysis to html
+
+```
+//  Below command creates metrics folder in project root
+flutter pub run dart_code_metrics:metrics analyze lib --reporter=html
+```
+
+![Code Metrics HTML Output](assets/metrics.png)
+
+**Check Unused Files Output** Identifies each gile under lib which is unused.
+
+```
+$ flutter pub run dart_code_metrics:metrics check-unused-files lib
+⚠ unused file: lib/helpers/custom_classes.dart
+⚠ unused file: lib/helpers/measured_size.dart
+⚠ unused file: lib/helpers/routes.dart
+⚠ unused file: lib/screens/home.dart
+⚠ unused file: lib/screens/test/test.dart
+⚠ unused file: lib/screens/worksheet/worksheet.dart
+⚠ unused file: lib/widgets/common/circular_gradient_btn.dart
+⚠ unused file: lib/widgets/roadmap/no_animation_material_page_route.dart
+```
+
+**Check Unused Code Output:** Identifies each line of code which is unused.
+
+```
+$ flutter pub run dart_code_metrics:metrics check-unused-code lib
+lib/helpers/constant.dart:
+    ⚠ unused top level variable noImagePlaceholder
+      at lib/helpers/constant.dart:4:1
+    ⚠ unused top level variable termsConditionRoute
+      at lib/helpers/constant.dart:6:1
+    ⚠ unused top level variable worksheetRoute
+      at lib/helpers/constant.dart:7:1
+
+lib/model/auth/user.dart:
+    ⚠ unused function userModalFromJson
+      at lib/model/auth/user.dart:7:1
+    ⚠ unused function userModalToJson
+      at lib/model/auth/user.dart:9:1
+
+lib/model/teach/classwork/classwork.dart:
+    ⚠ unused function classworkModalToJson
+      at lib/model/teach/classwork/classwork.dart:9:1
+....
+```
 
 **Supported Formats:**
 
