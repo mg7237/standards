@@ -9,6 +9,7 @@ Coding Standards to be used for Dart/Flutter code:
 -   [Handling Widget Size](#handling-widget-size)
 -   [Handling Color And Text Style](#handling-color-and-text-style)
 -   [Handling `Date` Type](#handling-date-type)
+-   [Show Toast Message](#show-toast-message)
 -   [Imports](#imports)
 -   [Null safe and Null aware](#null-safe-and-null-aware)
 -   [as vs is](#as-vs-is)
@@ -32,6 +33,17 @@ Coding Standards to be used for Dart/Flutter code:
 
 -   All private variables, constants should be prefixed with `_`.
 
+```
+import '../common_widgets/my_widget.dart' // snake case for folder and file name
+Class MyClass(){ // UpperCamelCase for ClassName
+    const _pie = 3.14; // private const
+    String _textValue = "My Name"; // private Variable
+    int? registrationId; // public property
+    MyClass({this.registrationId}); // Class constructor
+    ....
+}
+```
+
 ### Code Comments
 
 Flutter team recommends to keep the comments short, in most cases it would be one liner unless you are describing a class or package<br>
@@ -48,34 +60,133 @@ Use inline commenting `//` instead of block comment `/* Lorem Ipsum */` and use 
 
 -   Avoid commenting UI widgets as in most cases these are self explanatory.
 
+```
+/// Student class manages CRUD operations for Student Data.
+/// It Uses studentData API to retreive and update db data
+class Student{
+    String studentId;
+    _boolDataRetreived = false; // Used to dispay student widget after data retreived from API
+    Student({this.studentId,this.studentName});
+    /// GetStudentData Gets Student Data for a studentId.
+    /// Returns Student model as return value if successful
+    /// returns null is unsuccessful
+    StudentModel _student = GetStudentData(studentId);
+    if (_student != null) {
+        _boolDataRetreived = true;
+        setState({});
+    }
+    ....
+}
+
+```
+
 ### Handling Widget Size
 
 Use `flutter_screenutil` package to define relative sizes i.e. height, width, padding, margin, font size, % of screen width, % of screen height etc. **No Hard Coding** of any attributes to be done in UI widget design.
+
+```
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+....
+Container(
+    padding: EdgeInsets.all(10.w), // 10 points
+    width: 0.5.sw, // 50% of screen width
+    height: 200.h, // 200dp Adapated to screen height
+    color: Colors.red,
+    child: Text(
+    'My actual width: ${0.5.sw}dp \n\n'
+    'My actual height: ${200.h}dp',
+    style: TextStyle(
+        color: Colors.white,
+        fontSize: 12.sp, // Adaptor font
+    ),
+    ),
+)
+```
 
 ### Handling Color And Text Style
 
 `theme` folder under `lib` contains `colors.dart` and `style.dart` which define standard colors and text styles to be used across application. **No Hard Coding** of `TextStyle` or `Colors` should be done within UI widget design.
 
+```
+import '../../theme/colors.dart'
+...
+Container(color: colorSky, child: Text('Text on skyBlue', style: TextStyle(color: colorText)));
+...
+Text('Use textFormTitleStyle',style: textFormTitleStyle);
+...
+```
+
 ### Handling Date Type
 
 To send/receive data of type **date** across API's, dates should be converted to string representing date-time in **UTC** (Zulu Time). For example date value is represented as `"2022-03-08T05:07:21.858Z"` which implies UTC date time equivalent to 08-March-2022, 05H:07M:21S and 858ms. Use `dateVariable.toUtc().toIso8601String()` to convert date to String and `DateTime.parse(dateVariable).toLocal()` to convert to string to local date time object.
 
+```
+Date myDate = DateTime.parse("2022-03-08T05:07:21.858Z").toLocal();
+String dateValue = myDate.toUtc().toIso8601String();
+```
+
+### Show Toast Message
+
+Use `fluttertoast` plugin for displaying toast messages. Follow simple synatx as below:
+
+```
+import 'package:fluttertoast/fluttertoast.dart';
+...
+Fluttertoast.showToast(msg: 'My custom message');
+
+```
+
 ### Imports
 
 Use relative imports for files in `lib` consistently which is shorter than importing files within your project by including your package name.
+
+```
+import '../api/api_helper.dart';
+import '../theme/style.dart';
+```
 
 ### Null safe and Null aware
 
 Prefer using `??` (if null) and `?.` (null aware) operators instead of null checks in conditional expressions. Avoid `late` and `!.` (not null assumption) which can cause run-time exceptions.
 <br/>Don't initialize variables with `null`.
 
+```
+String? myString; // Do not use myString = null
+MyClass myClass?;
+late mySecondClass; // Avoid late keyword
+if ((myString ?? '') == '') {
+    // Do Something
+}
+
+if (myClass?.property == 0) {
+    // Do Something
+}
+
+if (mySecondClass!.property == 0) { // Avoid !. usage
+    // Do Something
+}
+```
+
 ### as vs is
 
 Avoid using `as` instead, use `is` operator. The `as` cast operator throws an exception if the cast is not possible. To avoid an exception being thrown, one can perform check if cast is possible using `is` operator.
 
+```
+Map<String,dynamic> myMap = {'String Value' : 'My String Value', 'List Value' : <int>[0,1,2,3]}
+for (int i = 0; i < myMap.length; i++) {
+    if (myMap[i]['String Value'] is String) {
+        String myString = myMap[i]['String Value'];
+    } else if (myMap[i]['List Value'] is List<int>) {
+        List<int> myList = myMap[i]['List Value'];
+    }
+}
+```
+
 ### Avoid var
 
 Always specify the type of member when its value type is known. Avoid using `var` when possible as it consumes higher memory.
+
+`MyClass class = MyClass(); // Don't use: var MyClass = MyClass()`
 
 ### Reusable Widgets
 
@@ -89,27 +200,115 @@ Always specify the type of member when its value type is known. Avoid using `var
 
 To perform a sequence of operations on the same object, use the Cascade(..) operator to keep the code concise and clean.
 
+```
+Path path = Path()
+..lineTo(0, size.height)
+..lineTo(size.width, size.height)
+..lineTo(size.width, 0)
+..close();
+```
+
 ### Expression Functions
 
 For functions that contain just one expression, you can use an expression function. The `=>` (arrow) notation is used for expression function which is more concide and cleaner implementation.
 
+```
+get width => right - left; // Instead of: get width () {right -left;}
+
+```
+
 ### Avoid `Print()`
 
-Use `debugPrint()` instead of `Print()` during development. Avoid both in production code. For production logging use `dart:developer log()`.
+Use `debugPrint()` instead of `Print()` during development. Avoid both in production code.
 
 ### Avoid String `+`
 
 Avoid `+` to concatenate long strings. Instead use interpolation i.e. $var or ${class.property} within the string to formulate the desired concatenated string.
 
+```
+// Don't use "My String Length is " + stringLength;
+String myString = "My String Length is $stringLength";
+```
+
 ### Asynchronous Calls
 
 Use `async`/`await` over Future callback. It improves readability and maintenance.
+
+```
+String GetToken async {
+    // Call API to get Token from server
+}
+...
+token = await GetToken();s
+
+```
 
 ### `Const` Widgets
 
 If a widget will not change on `setState` call then we should define it as constant. It will prevent the widget to rebuild so it improves performance.
 
+`const SizedBox(height: 20.h, width: 10.w);`
+
 ### Code Design
 
 Guidelines for writing consistent, usable APIs for libraries can be found [here](https://dart.dev/guides/language/effective-dart/design)<br>
-The page covers best practices for naming variables, classes, methods and writing readable and maintainable code.
+The page covers best practices for naming variables, classes, methods and writing readable and maintainable code. Below are the key rules that you can incorporate in your code.
+
+```
+// Use Terms Consistently & Avoid abbreviations
+pageCount         // A field.
+updatePageCount() // Consistent with pageCount.
+toSomething()     // Consistent with Iterable's toList().
+asSomething()     // Consistent with List's asMap().
+Point             // A familiar concept.
+
+// Prefer putting the most descriptive noun last.
+pageCount             // A count (of pages).
+ConversionSink        // A sink for doing conversions.
+decorateBox           // A container to be decorated
+
+// Consider making the code read like a sentence.
+if (errors.isEmpty) ...
+
+// "Hey, subscription, cancel!"
+subscription.cancel();
+
+// "Get the monsters where the monster has claws."
+monsters.where((monster) => monster.hasClaws);
+
+// PREFER a noun phrase for a non-boolean property or variable.
+list.length
+context.lineWidth
+quest.rampagingSwampBeast
+
+// PREFER a non-imperative verb phrase for a boolean property or variable.
+isEmpty
+hasElements
+canClose
+closesWindow
+canShowPopup
+hasShownPopup
+
+// PREFER the “positive” name for a boolean property or variable.
+if (socket.isConnected && database.hasData) {
+  socket.write(database.read());
+}
+
+// AVOID starting a method name with get.
+breakfastOrder // instead of getBreakfastOrder
+
+// PREFER naming a method to___() if it copies the object’s state to a new object.
+list.toSet();
+stackTrace.toString();
+dateTime.toLocal();
+
+// PREFER naming a method as___() if it returns a different representation backed by the original object.
+var map = table.asMap();
+var list = bytes.asFloat32List();
+var future = subscription.asFuture();
+
+// AVOID describing the parameters in the function’s or method’s name.
+list.add(element);
+map.remove(key);
+
+```
