@@ -1,2 +1,2 @@
 -   <a href="/">All Docs</a>
--   [Git](/)
+-   [Flutter](/)
