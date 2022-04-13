@@ -17,6 +17,20 @@ The Flutter cheat sheet covers common implementation patterns to be used across 
 -   **Common CLI Commands:**
 
 ```
+// Verify the status, version of your flutter environment
+$ flutter doctor
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 2.10.4, on macOS 12.2.1 21D62 darwin-arm, locale en-IN)
+[✓] Android toolchain - develop for Android devices (Android SDK version 31.0.0-rc3)
+[✓] Xcode - develop for iOS and macOS (Xcode 13.3.1)
+[✓] Chrome - develop for the web
+[✓] Android Studio (version 2020.3)
+[✓] VS Code (version 1.66.2)
+[✓] Connected device (1 available)
+[✓] HTTP Host Availability
+
+• No issues found!
+...
 // Below reads the pubspec.yaml file and downloads all network
 // dependent resources such as plugins, icons resources.
 $ flutter pub get
