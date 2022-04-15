@@ -8,4 +8,5 @@ export const docs = {
     redis: "Redis",
     flutter: "Flutter",
     "graphics-design": "Graphics Design",
+    deployment: "Deployment",
 };
