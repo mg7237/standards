@@ -11,6 +11,7 @@
 -   <a href="/redis">Redis</a>
 -   <a href="/flutter">Flutter</a>
 -   <a href="/graphics-design">Graphics Design</a>
+-   <a href="/deployment">Deployment</a>
 
 ## Roadmap
 
