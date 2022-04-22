@@ -4,12 +4,14 @@ The Flutter cheat sheet covers common implementation patterns to be used across 
 
 -   [Flutter Command Line](#command-line)
 -   [Understand Example App](#understand-example-app)
+-   [Understand Example App](#understand-example-app)
 -   [Safe Area](#safe-area)
 -   [Define Constants](#define-constants)
 -   [Navigation](#navigation)
 -   [Local Persistence](#local-persistence)
 -   [Model Definition](#model-definition)
 -   [API Calls](#api-calls)
+-   [Develop User Profile App](#develop-user-profile-app)
 
 ### Flutter Command Line
 
@@ -53,7 +55,7 @@ $ flutter build apk/ipa/web
 Everytime you create a new flutter project, it comes with a simple counter app. It would be a good place to start understanding a basic Flutter app structure and how it relates to any programming languages that you may have worked with in past.
 
 -   **pubspec.yaml:** Defines all dependencies for the project including 3rd party plugins, assets - icons, images, audio, video, fonts, any other build dependency.
--   **assets:** Typically a asset folder is created in project root which are included in build process
+-   **assets:** Typically a asset folder is created under project root which gets included in the build process
 -   **android/ios/web/windows:** Folders containing OS specific build and configuration files generated when you compile or run a flutter app during development process
 -   **build:** Binary files generated from build process are stored in this folder. This folder must be included on .gitignore file.
 -   **lib:** Home of all your dart code. Below is walkthough of main.dart in example app.
@@ -354,6 +356,306 @@ dio.Response response = await apiClient.getData(url: APIUrls().classUrl +
 
 ```
 
+### Develop User Profile App
+
+An end to end, exhaustive APP covering key Flutter features (listed below). The objective is to get practise by impletementing the end to end solution. The complete app in Git is available [here](#api-calls). Please follow along with the instructions and snippets provided to help you along. Do give it a go before you get tempted to clone the app and work backwards which always seems very easy and logical in hindsight.
+
+1.  **UI:** Picture, Name, email-id, contact number (store country and the number separately as strings), pin-code
+1.  **Getx:** based State Management, Routing and Dependency injection
+1.  **drop-down:** with country flags to select contact country "Country Code" i.e +91 for India, +65 for Singapore, +001 US/Canada and so on.
+1.  **Date Picker and Date Time Picker:** for profile create data
+1.  **Image Upload:** for user profile image
+1.  **File Upload:** for user documentation with restricted file types
+1.  **Toasts & Popups:** for information and errors display
+1.  **Form Validation:** individual field as well as entire form validations
+1.  **REST API calls with Dio:** to store/receive data from server
+
+Let's get started!!!
+
+-   **Create new project and update pubspec.yaml**
+
+```
+// Create a new project from commandline
+$ flutter create first  // Name the project as first
+
+// Open pubspec.yaml and remove all comments and add required dependencies
+$ flutter pub add dio // API calls
+$ flutter pub add fluttertoast // Toast messages
+$ flutter pub add get // Note: get here refers to getx package
+
+$ flutter pub get // while pub get implies downloading the dependencies
+
+
+// Now your pubspec.yaml should look like
+
+name: first
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  dio: ^4.0.6
+  fluttertoast: ^8.0.8
+  get: ^4.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+
 ```
 
+-   **Remove sample app comments and code in main.dart to return scaffold with empty body (Center Widget)**
+
+```
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My First Flutter App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: const Center(child: Text('')));
+  }
+}
+
+
+```
+
+-   **Create User Profile Model class**
+
+```
+// UserProfile model class
+class UserProfileModel {
+  // Define class attributes required in UI and stored in DB
+  String? id;
+  String? userName; // email id of the user
+  String? imagePath; // user image location
+  String? contactCountry; // ISIN country codes
+  String? contactNumber; // Mobile Number
+  String? pinCode; // Pin Code or Zip Code
+  DateTime? dateOfBirth; // dateOfBirth
+  DateTime? passwordExpiryDateTime;
+  List<String?>? documents = [];
+  // Define class constructor
+  UserProfileModel(
+      {this.id,
+      this.userName,
+      this.imagePath,
+      this.contactCountry,
+      this.contactNumber,
+      this.pinCode,
+      this.dateOfBirth,
+      this.passwordExpiryDateTime,
+      this.documents});
+
+// Create factory class which will create model instance using the json (Map)
+// as input parameter
+
+  factory UserProfileModel.fromJson(
+          Map<String, dynamic>? json) =>
+      UserProfileModel(
+          id: json?["id"] ?? '',
+          userName: json?["user_name"] ?? '',
+          imagePath: json?["image_path"] ?? '',
+          contactCountry: json?["contact_country"] ?? '',
+          contactNumber: json?["contact_number"] ?? '',
+          pinCode: json?["pin_code"] ?? '',
+          dateOfBirth: DateTime.parse(json?["date_of_birth"] ?? ''),
+          passwordExpiryDateTime:
+              DateTime.parse(json?["password_expiry_date_time"] ?? ''),
+          documents: json?["documents"]);
+
+// Convert the Model object to json (Map)
+  Map<String, dynamic> toJson() => {
+        "id": id ?? '',
+        "user_name": userName ?? '',
+        "image_path": imagePath ?? '',
+        "contact_country": contactCountry ?? '',
+        "contact_number": contactNumber ?? '',
+        "pin_code": pinCode ?? '',
+        "date_of_birth": dateOfBirth,
+        "password_expiry_date_time": passwordExpiryDateTime,
+        "documents": documents
+      };
+}
+
+```
+
+-   **Create Get Controller, with CRUD methods**
+
+```
+import 'package:get/get.dart';
+import './profile_model.dart';
+
+// Create UserProfile controller class which extends Getx controller
+class UserProfileController extends GetxController {
+  // Instantiate Getx model class
+  Rx<UserProfileModel> profileModel = UserProfileModel().obs;
+  // Define a boolean which is used to track if the async calls are in process
+  RxBool loading = false.obs;
+
+  // Define empty CRUD methods for now
+  Future<bool> createUserProfile(UserProfileModel userProfile) async {
+    return true;
+  }
+
+  Future<bool> updateUserProfile(UserProfileModel userProfile) async {
+    return true;
+  }
+
+  Future<bool> searchUserProfile(
+      {required Map<String, String> profileData}) async {
+    return true;
+  }
+
+  Future<bool> deleteUserProfile(
+      {required Map<String, String> profileData}) async {
+    return true;
+  }
+}
+```
+
+-   **API helper for all API method implementation**
+
+```
+// API helper class implements Get, Post, Patch, Delele, File Upload, File Download
+import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+// Define base url constant (ideally kept in separate constants file)
+// ignore: constant_identifier_names
+const BASE_URL = 'https://abc.com';
+
+class ApiHelper {
+  // common headers to be used across API methods
+  Map<String, String> header = {
+    "content-type": "application/json",
+    "api_key": "xxxxx"
+  };
+  // Header, specifically for file upload/download
+  Map<String, String> filesHeader = {
+    "content-type": "application/x-www-form-urlencoded",
+    "api_key": "xxxxx"
+  };
+  final dio = Dio(); // Single instance var used across multiple calls
+
+  // path is expected to contain the complete url including parameters if any
+  // for example http://abc.com/profile?id=123
+  Future<Map<String, dynamic>> get(String path) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response =
+          await dio.get(path, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot get requested data, please try later');
+    }
+    return returnMap;
+  }
+
+  // Use to create data by calling respective dio method.
+  // postData is the complete data set to be created by API
+  Future<Map<String, dynamic>> post(
+      {required String path, required Map<String, dynamic> postData}) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response = await dio.post(path,
+          data: postData, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot create requested data, please try later');
+    }
+    return returnMap;
+  }
+
+  // Use to update data by calling respective dio method.
+  // patchData is the complete data set to be updated by API
+  Future<Map<String, dynamic>> patch(
+      {required String path, required Map<String, dynamic> patchData}) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response = await dio.patch(path,
+          data: patchData, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot update requested data, please try later');
+    }
+    return returnMap;
+  }
+
+  // Path contains parameters to uniqely identify the data to be deleted by API
+  Future<Map<String, dynamic>> delete(String path) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response =
+          await dio.delete(path, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot delete requested data, please try later');
+    }
+    return returnMap;
+  }
+}
+```
+
+-   **Form widget with input fields in top to down CRUD view**
+
+```
+// Form helps keep all related user input fields together as a form which can be validated as
+// a single entity and if all well then initiate controller method which encapsulates server communication
 ```
