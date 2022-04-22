@@ -46,10 +46,48 @@ Turn Specific Application's Maintenance Mode On/Off by clicking the Switch in fr
 
 <img src="flutter/assets/app-maintenance.png" alt="App Maintenance" width="300px" style="border: 1px solid lightgray;  vertical-align: middle;" />
 
+**Effects :**
+
+-   If the Maintenance is On,
+    -   Users will see Maintenance Message in the app.
+    -   User will not be able to perform any action in the app.
+-   If the Maintenance is turned Off, Maintenance Message will automatically close.
+    -   In Web, System will show Maintenance Completion Message, and show Refresh Page Button - it will close the message and take user to home page
+    -   In Mobile, System will show Maintenance Completion Message, and show Close Button - it will close the message
+
 ### Version Maintenance
 
-Turn Specific Application's Specific Version's Maintenance Mode On/Off by clicking the Switch in front of version Name, in Versions List Screen.
+Turn Specific Application's Specific Version's Maintenance Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
 
 ![Version Maintenance Image](assets/version-maintenance.png)
 
+**Effects :**
+
+-   Version Maintenance effects will be same as the application maintenance, but for this specific version only.
+
 ## Version Status Change
+
+### Current Version
+
+Current Version is a single Version which is the live in production (latest) of the specific application.
+
+?> This version should be the same as the live Play Store / App Store Versions.
+
+!> Make sure only one version is set to current at a time.
+
+Turn Specific Application's Specific Version's Current Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
+
+![Version Current Image](assets/version-current.png)
+
+**Effects :**
+
+-   This version is shown to users in the update messages.
+-   Users of this version will not be shown any update messages.
+
+### Latest Versions
+
+Latest Version are versions which are the live in production (latest) of the specific application, and do not require any updation.
+
+?> Generally there will be only single version marked as Latest, but while putting updates, we can mark new versions as latest as well. To avoid version update messages.
+
+### Active Versions
