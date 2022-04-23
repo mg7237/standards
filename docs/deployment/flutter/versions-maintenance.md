@@ -69,7 +69,7 @@ Turn Specific Application's Specific Version's Maintenance Mode On/Off by clicki
 
 ### Current Version
 
-Current Version is a single Version which is the live in production (latest) of the specific application.
+Current Version is a single Version which is live in production (latest) of the specific application.
 
 ?> This version should be the same as the live Play Store / App Store Versions.
 
@@ -86,8 +86,31 @@ Turn Specific Application's Specific Version's Current Mode On/Off by clicking t
 
 ### Latest Versions
 
-Latest Version are versions which are the live in production (latest) of the specific application, and do not require any updation.
+Latest Versions are versions which are live in production (latest) of the specific application, and do not require any updation.
 
 ?> Generally there will be only single version marked as Latest, but while putting updates, we can mark new versions as latest as well. To avoid version update messages.
 
+Turn Specific Application's Specific Version's Latest Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
+
+![Version Latest Image](assets/version-latest.png)
+
+**Effects :**
+
+-   Users of this version will not be shown any update messages (even if this version is not the current version).
+
 ### Active Versions
+
+Active Versions are versions which are live in production of the specific application, but do require updation to new (Current) version.
+
+These versions can operate without the need to update to latest(current) version, but it is recommended to update this version.
+
+Turn Specific Application's Specific Version's Active Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
+
+![Version Active Image](assets/version-active.png)
+
+**Effects :**
+
+-   Users of this version will be shown update message if there is a different current version available.
+-   Users can choose to skip the Update or for the Update.
+-   If user skips the update, he will be shown to update it on the next run.
+-   If this version is not active, then user will be shown message of Version Expired.
