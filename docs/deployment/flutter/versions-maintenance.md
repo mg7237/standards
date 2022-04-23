@@ -1,4 +1,4 @@
-# Versions & Manintenance
+# Versions & Maintenance
 
 The Maintenance Web Panel is used to manage the **Versioning** and **Maintenance** of All the **User Platforms** (Web and Mobile Apps). It allows to put any user platform into **maintenance** and manage **latest** and **active** **versions**.
 
