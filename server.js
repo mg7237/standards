@@ -80,8 +80,8 @@ const startApp = async () => {
         res.status(404).render("404");
     });
 
-    app.listen(3000, () => {
-        console.log("App listening on : http://127.0.0.1:" + 3000 + "/");
+    app.listen(process.env.APP_PORT, () => {
+        console.log("App listening on : http://127.0.0.1:" + process.env.APP_PORT + "/");
     });
 };
 
