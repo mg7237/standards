@@ -1,6 +1,6 @@
 # Topics - Svelte
 
-<img src="svlete/assets/svelte.png" alt="Svelte Logo" width="400" style="border-radius:5px" />
+<img src="assets/svelte.png" alt="Svelte Logo" width="400" style="border-radius:5px" />
 
 Website : *https://svelte.dev/*
 

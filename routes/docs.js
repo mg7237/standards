@@ -16,7 +16,7 @@ router.use("/:module/", async (req, res, next) => {
 });
 
 router.use("/:module/", (req, res, next) => {
-    express.static(join(__dirname, "../docs/" + req.params.module))(req, res, next);
+    express.static(join(__dirname, "../docs/docs/" + req.params.module))(req, res, next);
 });
 
 router.get("/", async (req, res) => {

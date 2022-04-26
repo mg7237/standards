@@ -2,27 +2,27 @@
 
 ## Docs
 
--   <a href="/accounts">Accounts & Access</a>
--   <a href="/installation-troubleshooting">Installation & Troubleshooting</a>
--   <a href="/git">Git</a>
--   <a href="/svelte">Svelte</a>
--   <a href="/node">Node.js</a>
--   <a href="/mongodb">MongoDB</a>
--   <a href="/redis">Redis</a>
--   <a href="/flutter">Flutter</a>
--   <a href="/graphics-design">Graphics Design</a>
--   <a href="/deployment">Deployment</a>
+-   <a href="/docs/accounts/">Accounts & Access</a>
+-   <a href="/docs/installation-troubleshooting/">Installation & Troubleshooting</a>
+-   <a href="/docs/git/">Git</a>
+-   <a href="/docs/svelte/">Svelte</a>
+-   <a href="/docs/node/">Node.js</a>
+-   <a href="/docs/mongodb/">MongoDB</a>
+-   <a href="/docs/redis/">Redis</a>
+-   <a href="/docs/flutter/">Flutter</a>
+-   <a href="/docs/graphics-design/">Graphics Design</a>
+-   <a href="/docs/deployment/">Deployment</a>
 
 ## Roadmap
 
-1. [ ] **<a href="/accounts">Accounts & Access</a>**
+1. [ ] **<a href="/docs/accounts">Accounts & Access</a>**
 
     - [ ] Google Email
     - [x] Github
     - [ ] ClickUp
     - [ ] Slack
 
-1. [ ] **<a href="/installation-troubleshooting">Installation & Toubleshooting</a>**
+1. [ ] **<a href="/docs/installation-troubleshooting">Installation & Toubleshooting</a>**
 
     - [x] Git & Git SSH Setup
     - [ ] Troubleshooting Git
@@ -37,7 +37,7 @@
     - [x] NoSQLBooster
     - [ ] Android Studio & Android SDK
 
-1. [ ] **<a href="/git">Git</a>**
+1. [ ] **<a href="/docs/git">Git</a>**
 
     - [x] Introduction to Git
     - [x] Architecture
@@ -65,9 +65,9 @@
     - [ ] git push origin -d [tag] Remove remote tag
     - [ ] git merge [branch/commit] and resolving merge conflicts
 
-1. [ ] **<a href="/svelte">Svelte</a>**
+1. [ ] **<a href="/docs/svelte">Svelte</a>**
 
-    - [ ] **<a href="/svelte/#/introduction">Svelte</a>**
+    - [ ] **<a href="/docs/svelte/#/introduction">Svelte</a>**
 
         - [ ] Introduction
         - [x] Svelte Tutorial
@@ -91,7 +91,7 @@
         - [ ] Svelte Specific Tags
         - [ ] Troubleshooting
 
-    - [ ] **<a href="/svelte/#/svelte-kit/introduction">SvelteKit</a>**
+    - [ ] **<a href="/docs/svelte/#/svelte-kit/introduction">SvelteKit</a>**
 
         - [ ] Introduction
         - [ ] Architecture
@@ -157,7 +157,7 @@
         - [ ] Vite Configuration
         - [ ] Template Project
 
-1. [ ] **<a href="/node">Node.js</a>**
+1. [ ] **<a href="/docs/node">Node.js</a>**
 
     - [ ] Introduction
     - [ ] Node CLI
@@ -214,7 +214,7 @@
         - [ ] Renew
     - [ ] Using Insomnia to test/call APIs
 
-1. [ ] **<a href="/mongodb">MongoDB</a>**
+1. [ ] **<a href="/docs/mongodb">MongoDB</a>**
 
     - [ ] Introduction
     - [ ] Database Setup
@@ -244,9 +244,9 @@
             - [ ] $search
             - [ ] Other $ operators
 
-1. [ ] **<a href="/redis">Redis</a>**
+1. [ ] **<a href="/docs/redis">Redis</a>**
 
     - [ ] Introduction
     - [ ] Database Setup
 
-1. [ ] **<a href="/graphics-design">Graphics Design</a>**
+1. [ ] **<a href="/docs/graphics-design">Graphics Design</a>**
