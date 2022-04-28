@@ -6,10 +6,6 @@ Coding Standards to be used for Dart/Flutter code:
 
 -   [Naming Conventions](#naming-conventions)
 -   [Code Comments](#code-comments)
--   [Handling Widget Size](#handling-widget-size)
--   [Handling Color And Text Style](#handling-color-and-text-style)
--   [Handling `Date` Type](#handling-date-type)
--   [Show Toast Message](#show-toast-message)
 -   [Imports](#imports)
 -   [Null safe and Null aware](#null-safe-and-null-aware)
 -   [as vs is](#as-vs-is)
@@ -77,62 +73,6 @@ class Student{
     }
     ....
 }
-
-```
-
-### Handling Widget Size
-
-Use `flutter_screenutil` package to define relative sizes i.e. height, width, padding, margin, font size, % of screen width, % of screen height etc. **No Hard Coding** of any attributes to be done in UI widget design.
-
-```
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-....
-Container(
-    padding: EdgeInsets.all(10.w), // 10 points
-    width: 0.5.sw, // 50% of screen width
-    height: 200.h, // 200dp Adapated to screen height
-    color: Colors.red,
-    child: Text(
-    'My actual width: ${0.5.sw}dp \n\n'
-    'My actual height: ${200.h}dp',
-    style: TextStyle(
-        color: Colors.white,
-        fontSize: 12.sp, // Adaptor font
-    ),
-    ),
-)
-```
-
-### Handling Color And Text Style
-
-`theme` folder under `lib` contains `colors.dart` and `style.dart` which define standard colors and text styles to be used across application. **No Hard Coding** of `TextStyle` or `Colors` should be done within UI widget design.
-
-```
-import '../../theme/colors.dart'
-...
-Container(color: colorSky, child: Text('Text on skyBlue', style: TextStyle(color: colorText)));
-...
-Text('Use textFormTitleStyle',style: textFormTitleStyle);
-...
-```
-
-### Handling Date Type
-
-To send/receive data of type **date** across API's, dates should be converted to string representing date-time in **UTC** (Zulu Time). For example date value is represented as `"2022-03-08T05:07:21.858Z"` which implies UTC date time equivalent to 08-March-2022, 05H:07M:21S and 858ms. Use `dateVariable.toUtc().toIso8601String()` to convert date to String and `DateTime.parse(dateVariable).toLocal()` to convert to string to local date time object.
-
-```
-Date myDate = DateTime.parse("2022-03-08T05:07:21.858Z").toLocal();
-String dateValue = myDate.toUtc().toIso8601String();
-```
-
-### Show Toast Message
-
-Use `fluttertoast` plugin for displaying toast messages. Follow simple synatx as below:
-
-```
-import 'package:fluttertoast/fluttertoast.dart';
-...
-Fluttertoast.showToast(msg: 'My custom message');
 
 ```
 
