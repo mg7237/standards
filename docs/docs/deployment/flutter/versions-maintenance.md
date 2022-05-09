@@ -67,6 +67,17 @@ Turn Specific Application's Specific Version's Maintenance Mode On/Off by clicki
 
 ## Version Status Change
 
+### Review Version
+
+Review Version should be a single Version which will be sent to the respective application store for approval.
+
+?> This version should be the same as to be sent for an approval.
+
+!> Make sure to disable the version **review** before release/rollout the app on respective store.
+
+Turn Specific Application’s Specific Version’s review Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
+
+![Version Current Image](assets/review.png)
 ### Current Version
 
 Current Version is a single Version which is live in production (latest) of the specific application.
