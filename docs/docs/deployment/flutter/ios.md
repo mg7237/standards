@@ -1,4 +1,4 @@
-# IOS APP STORE
+# iOS APP STORE
 
 1. **Verify** development team and automatic singin settings.
 2. To build **ipa**, run `flutter build ipa`.
