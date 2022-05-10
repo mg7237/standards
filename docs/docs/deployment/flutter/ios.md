@@ -1,11 +1,11 @@
 # iOS
-
 ## Configuration
 
 1. **Runner.xcodeproj** file 
     - Select **TARGETS**.
     - Go to the **Singning & Capabilities** tab.
     - Select a team **"Saarthi Pedagogy Private Limited"** and choose **automatically manage signin**.
+
 ## Build
 
 1. **Verify** development team and automatic singin settings.
