@@ -21,6 +21,8 @@
 
 ## Build
 
+!> Check .env parameters should be set to production URLs.
+
 1. Verify that you have added valid [configuration files](#configuration-files).
 2. To build **APK**, run `flutter build apk`.
 3. To build appbundle, run `flutter build appbundle`.

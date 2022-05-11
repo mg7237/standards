@@ -8,6 +8,8 @@
 
 ## Build
 
+!> Check .env parameters should be set to production URLs.
+
 1. **Verify** development team and automatic singin settings.
 2. To build **ipa**, run `flutter build ipa`.
 3. It will build **ipa** assets and give path of build output.
