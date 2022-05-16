@@ -40,7 +40,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 // dependent resources such as plugins, icons resources.
 $ flutter pub get
 ...
-// Cleans workspace, requires pub get to again get all resources.
+// Cleans workspace, requires pub get to ag maain get all resources.
 $ flutter clean
 ...
 // Creates a new Flutter project in current directory.
@@ -417,17 +417,19 @@ dio.Response response = await apiClient.getData(url: APIUrls().classUrl +
 
 ### Develop User Profile App
 
-An end to end, exhaustive APP covering key Flutter features (listed below). The objective is to get practise by impletementing the end to end solution. The complete app in Git is available [here](#api-calls). Please follow along with the instructions and snippets provided to help you along. Do give it a go before you get tempted to clone the app and work backwards which always seems very easy and logical in hindsight.
+An end to end APP covering key Flutter features (listed below). The objective is to get practice by impletementing the end to end solution. The complete app in Git is available [here](#api-calls). Please follow along with the instructions and snippets provided to help you along. Do give it a go before you get tempted to clone the app and work backwards which always seems very easy and logical in hindsight.
 
-1.  **UI:** Picture, Name, email-id, contact number (store country and the number separately as strings), pin-code
-1.  **Getx:** based State Management, Routing and Dependency injection
-1.  **drop-down:** with country flags to select contact country "Country Code" i.e +91 for India, +65 for Singapore, +001 US/Canada and so on.
-1.  **Date Picker and Date Time Picker:** for profile create data
+1.  **Profile UI:** Picture, Name, email-id, contact number (store country and the number separately), pin-code, date of birth.
+1.  **Create, Update, Delete Profile:** Seach profiles based on search criteria entered by user and show the list of user profiles in card form.
+1.  **Search Profile:** Seach profiles based on search criteria entered by user and show the list of user profiles in card form.
+1.  **Getx:** State Management, Routing and Dependency injection
+1.  **drop-down:** with country flags to select contact country "Country Code" i.e IN for India, SG for Singapore etc.
+1.  **Date Picker and Date Time Picker:** for profile date of birth
 1.  **Image Upload:** for user profile image
-1.  **File Upload:** for user documentation with restricted file types
 1.  **Toasts & Popups:** for information and errors display
 1.  **Form Validation:** individual field as well as entire form validations
 1.  **REST API calls with Dio:** to store/receive data from server
+1.  **SQLite Local DB:** To store reference data
 
 Let's get started!!!
 
@@ -441,8 +443,13 @@ $ flutter create first  // Name the project as first
 $ flutter pub add dio // API calls
 $ flutter pub add fluttertoast // Toast messages
 $ flutter pub add get // Note: get here refers to getx package
+$ flutter pub add get sqflite
+$ flutter pub add flutter_spinkit
+$ flutter pub add date_time_picker
+$ flutter pub add image_picker
 
-$ flutter pub get // while pub get implies downloading the dependencies
+
+$ flutter pub get // Pub get implies downloading the dependencies
 
 
 // Now your pubspec.yaml should look like
@@ -463,8 +470,12 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
-  fluttertoast: ^8.0.8
-  get: ^4.6.1
+  fluttertoast: ^8.0.9
+  sqflite: ^2.0.2+1
+  shared_preferences: ^2.0.13
+  flutter_spinkit: ^5.1.0
+  date_time_picker: ^2.1.0
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_test:
@@ -477,11 +488,9 @@ flutter:
 
 ```
 
--   **Remove sample app comments and code in main.dart to return scaffold with empty body (Center Widget)**
+-   **Remove sample app comments and code in main.dart to return scaffold with Stateless Widget named AppHome which takes title as parameter**
 
 ```
-import 'package:flutter/material.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -496,40 +505,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const AppHome(title: 'My First Flutter App'),
     );
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: const Center(child: Text('')));
-  }
-}
-
-
 ```
 
--   **Create User Profile Model class**
+-   **Create User Profile Model class, refer field list above**
 
 ```
 // UserProfile model class
 class UserProfileModel {
   // Define class attributes required in UI and stored in DB
-  String? id;
+  int? id;
   String? userName; // email id of the user
   String? imagePath; // user image location
   String? contactCountry; // ISIN country codes
@@ -537,35 +525,34 @@ class UserProfileModel {
   String? pinCode; // Pin Code or Zip Code
   DateTime? dateOfBirth; // dateOfBirth
   DateTime? passwordExpiryDateTime;
-  List<String?>? documents = [];
+
   // Define class constructor
-  UserProfileModel(
-      {this.id,
-      this.userName,
-      this.imagePath,
-      this.contactCountry,
-      this.contactNumber,
-      this.pinCode,
-      this.dateOfBirth,
-      this.passwordExpiryDateTime,
-      this.documents});
+  UserProfileModel({
+    this.id,
+    this.userName,
+    this.imagePath,
+    this.contactCountry,
+    this.contactNumber,
+    this.pinCode,
+    this.dateOfBirth,
+    this.passwordExpiryDateTime,
+  });
 
 // Create factory class which will create model instance using the json (Map)
 // as input parameter
 
-  factory UserProfileModel.fromJson(
-          Map<String, dynamic>? json) =>
+  factory UserProfileModel.fromJson(Map<String, dynamic>? json) =>
       UserProfileModel(
-          id: json?["id"] ?? '',
-          userName: json?["user_name"] ?? '',
-          imagePath: json?["image_path"] ?? '',
-          contactCountry: json?["contact_country"] ?? '',
-          contactNumber: json?["contact_number"] ?? '',
-          pinCode: json?["pin_code"] ?? '',
-          dateOfBirth: DateTime.parse(json?["date_of_birth"] ?? ''),
-          passwordExpiryDateTime:
-              DateTime.parse(json?["password_expiry_date_time"] ?? ''),
-          documents: json?["documents"]);
+        id: json?["id"] ?? 0,
+        userName: json?["user_name"] ?? '',
+        imagePath: json?["image_path"] ?? '',
+        contactCountry: json?["contact_country"] ?? '',
+        contactNumber: json?["contact_number"] ?? '',
+        pinCode: json?["pin_code"] ?? '',
+        dateOfBirth: DateTime.parse(json?["date_of_birth"] ?? ''),
+        passwordExpiryDateTime:
+            DateTime.parse(json?["password_expiry_date_time"] ?? ''),
+      );
 
 // Convert the Model object to json (Map)
   Map<String, dynamic> toJson() => {
@@ -575,87 +562,50 @@ class UserProfileModel {
         "contact_country": contactCountry ?? '',
         "contact_number": contactNumber ?? '',
         "pin_code": pinCode ?? '',
-        "date_of_birth": dateOfBirth,
-        "password_expiry_date_time": passwordExpiryDateTime,
-        "documents": documents
+        "date_of_birth": dateOfBirth?.toUtc().toIso8601String(),
+        "password_expiry_date_time": passwordExpiryDateTime?.toIso8601String(),
       };
 }
-
 ```
 
--   **Create Get Controller, with CRUD methods**
+-   **Create AppHome Statefull widget with one text field for user to enter search criteria and FloatingActionButton with + icon. Search will result in a list of cards representing profiles searched and + icon takes to create profile page. Include the logic for creation of DB, refresh of DB data**
 
 ```
-import 'package:get/get.dart';
-import './profile_model.dart';
-
-// Create UserProfile controller class which extends Getx controller
-class UserProfileController extends GetxController {
-  // Instantiate Getx model class
-  Rx<UserProfileModel> profileModel = UserProfileModel().obs;
-  // Define a boolean which is used to track if the async calls are in process
-  RxBool loading = false.obs;
-
-  // Define empty CRUD methods for now
-  Future<bool> createUserProfile(UserProfileModel userProfile) async {
-    return true;
-  }
-
-  Future<bool> updateUserProfile(UserProfileModel userProfile) async {
-    return true;
-  }
-
-  Future<bool> searchUserProfile(
-      {required Map<String, String> profileData}) async {
-    return true;
-  }
-
-  Future<bool> deleteUserProfile(
-      {required Map<String, String> profileData}) async {
-    return true;
-  }
-}
-```
-
--   **API helper for all API method implementation**
-
-```
-// API helper class implements Get, Post, Patch, Delele, File Upload, File Download
-import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
+// API helper class implements Get, Post, Patch, Delele methods
 // Define base url constant (ideally kept in separate constants file)
 // ignore: constant_identifier_names
-const BASE_URL = 'https://abc.com';
+// Postman mock server - refer first-app collection
+const baseURL = 'https://7e3291e9-4aa7-495f-a1af-542793814083.mock.pstmn.io';
 
 class ApiHelper {
-  // common headers to be used across API methods
+  static final ApiHelper _apihelper = ApiHelper._internal();
+
+  factory ApiHelper() {
+    return _apihelper;
+  }
+  ApiHelper._internal();
+  // Common headers to be used across API methods
   Map<String, String> header = {
     "content-type": "application/json",
     "api_key": "xxxxx"
   };
-  // Header, specifically for file upload/download
-  Map<String, String> filesHeader = {
-    "content-type": "application/x-www-form-urlencoded",
-    "api_key": "xxxxx"
-  };
   final dio = Dio(); // Single instance var used across multiple calls
 
-  // path is expected to contain the complete url including parameters if any
+  // Path is expected to contain the complete url including parameters if any
   // for example http://abc.com/profile?id=123
-  Future<Map<String, dynamic>> get(String path) async {
-    Map<String, dynamic> returnMap = {};
+  Future<dynamic> get(String path) async {
+    dynamic returnData;
     try {
       Response response =
           await dio.get(path, options: Options(headers: header));
       if (response.statusCode == 200) {
-        returnMap = response.data;
+        returnData = response.data;
       }
     } catch (e) {
       Fluttertoast.showToast(
           msg: 'Cannot get requested data, please try later');
     }
-    return returnMap;
+    return returnData;
   }
 
   // Use to create data by calling respective dio method.
@@ -671,7 +621,13 @@ class ApiHelper {
       }
     } catch (e) {
       Fluttertoast.showToast(
-          msg: 'Cannot create requested data, please try later');
+          msg: 'Cannot create requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     return returnMap;
   }
@@ -689,7 +645,13 @@ class ApiHelper {
       }
     } catch (e) {
       Fluttertoast.showToast(
-          msg: 'Cannot update requested data, please try later');
+          msg: 'Cannot update requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     return returnMap;
   }
@@ -705,16 +667,1119 @@ class ApiHelper {
       }
     } catch (e) {
       Fluttertoast.showToast(
-          msg: 'Cannot delete requested data, please try later');
+          msg: 'Cannot delete requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return returnMap;
+  }
+}
+
+```
+
+-   **Create Get Controller, with properties required in UI and CRUD methods**
+
+```
+enum ProfileMode { create, update }
+
+// Create UserProfile controller class which extends Getx controller
+class UserProfileController extends GetxController {
+  // Instantiate ProfileModel model class
+  Rx<UserProfileModel> profileModel = UserProfileModel().obs;
+  Rx<ProfileMode> profileMode = ProfileMode.create.obs;
+  RxString countrySelected = 'IN'.obs;
+  RxInt id = 0.obs;
+  RxString imagePath = ''.obs;
+  Rx<DateTime> dob = DateTime(2000).obs;
+  RxDouble screenWidth = 0.0.obs;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController contactNumberController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  final formKey = GlobalKey<FormState>().obs;
+  final ImagePicker _picker = ImagePicker();
+
+  // Takes care of Saving user profile in case of new record or
+  // updates to existing data
+  Future<void> createOrUpdateUserProfile() async {
+    // Check if form validation is success
+    if (formKey.value.currentState!.validate()) {
+      dynamic response;
+      ApiHelper apiHelper = ApiHelper();
+      profileModel.value = UserProfileModel(
+          id: null,
+          userName: nameController.text,
+          contactCountry: countrySelected.value,
+          contactNumber: contactNumberController.text,
+          pinCode: pincodeController.text,
+          dateOfBirth: dob.value,
+          imagePath: profileModel.value.imagePath,
+          passwordExpiryDateTime: DateTime.now().add(const Duration(days: 30)));
+      // Update id if user is updating a record and call post or patch mathods
+      // depending on the mode
+      if (profileMode.value == ProfileMode.update) {
+        response = await apiHelper.post(
+            path: '$baseURL/profile', postData: profileModel.toJson());
+      } else {
+        profileModel.value.id = id.value;
+        response = await apiHelper.patch(
+            path: '$baseURL/profile', patchData: profileModel.toJson());
+      }
+      // If a valid response is received, show toast with success message
+      if (response != {}) {
+        if (response["status"]) {
+          profileModel.value.id = response["id"];
+          Fluttertoast.showToast(
+              msg: (profileMode.value == ProfileMode.create)
+                  ? "Profile Created!"
+                  : "Profile Updated",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.blue,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: "API Failed: ${response["message"] ?? ''}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: "API failed: ${response["message"] ?? ''}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+      formKey.value.currentState?.reset();
+      Get.back();
+    }
+  }
+
+  // Deletes a user profile
+  Future<bool> deleteUserProfile() async {
+    bool status = false;
+    ApiHelper apiHelper = ApiHelper();
+    var response =
+        await apiHelper.delete('$baseURL/profile?id=${profileModel.value.id}');
+    if (response != {}) {
+      if (response['status']) {
+        Fluttertoast.showToast(
+            msg: "Profile Deleted",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.blue,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        status = true;
+        Get.back();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Profile Deletion Failed. Please try later",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Profile Deletion Failed. Please try later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return status;
+  }
+
+  // Helper to select the image file
+  Future<String?> getPicture(ImageSource imageOption) async {
+    XFile? xFile;
+    try {
+      if (imageOption == ImageSource.camera) {
+        xFile = await _picker.pickImage(source: ImageSource.camera);
+        if (xFile != null) {
+          return xFile.path;
+        } else {
+          Fluttertoast.showToast(
+              msg: 'Image not selected',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } else {
+        xFile = await _picker.pickImage(source: ImageSource.gallery);
+        if (xFile != null) {
+          return xFile.path;
+        } else {
+          Fluttertoast.showToast(
+              msg: 'Image not selected',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Exception while picking image',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return null;
+  }
+
+  // Helper to select the image file calls getPicture to get the image file
+  Future<void> selectAvatarPicture() async {
+    await Get.bottomSheet(
+        SizedBox(
+          height: 100,
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () async {
+                  imagePath.value = await getPicture(ImageSource.camera) ?? '';
+                  Get.back();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Picture From Camera',
+                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                  ),
+                ),
+              ),
+              const Divider(
+                color: Colors.white,
+                thickness: 1,
+              ),
+              InkWell(
+                onTap: () async {
+                  imagePath.value = await getPicture(ImageSource.gallery) ?? '';
+                  Get.back();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Text(
+                    'Picture From Gallery',
+                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.blue);
+  }
+}
+
+
+```
+
+-   **API helper for all API method implementation**
+
+```
+// API helper class implements Get, Post, Patch, Delele methods
+// Define base url constant (ideally kept in separate constants file)
+// ignore: constant_identifier_names
+// Postman mock server - refer first-app collection
+const baseURL = 'https://7e3291e9-4aa7-495f-a1af-542793814083.mock.pstmn.io';
+
+class ApiHelper {
+  static final ApiHelper _apihelper = ApiHelper._internal();
+
+  factory ApiHelper() {
+    return _apihelper;
+  }
+  ApiHelper._internal();
+  // Common headers to be used across API methods
+  Map<String, String> header = {
+    "content-type": "application/json",
+    "api_key": "xxxxx"
+  };
+  final dio = Dio(); // Single instance var used across multiple calls
+
+  // Path is expected to contain the complete url including parameters if any
+  // for example http://abc.com/profile?id=123
+  Future<dynamic> get(String path) async {
+    dynamic returnData;
+    try {
+      Response response =
+          await dio.get(path, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnData = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot get requested data, please try later');
+    }
+    return returnData;
+  }
+
+  // Use to create data by calling respective dio method.
+  // postData is the complete data set to be created by API
+  Future<Map<String, dynamic>> post(
+      {required String path, required Map<String, dynamic> postData}) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response = await dio.post(path,
+          data: postData, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot create requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return returnMap;
+  }
+
+  // Use to update data by calling respective dio method.
+  // patchData is the complete data set to be updated by API
+  Future<Map<String, dynamic>> patch(
+      {required String path, required Map<String, dynamic> patchData}) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response = await dio.patch(path,
+          data: patchData, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot update requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return returnMap;
+  }
+
+  // Path contains parameters to uniqely identify the data to be deleted by API
+  Future<Map<String, dynamic>> delete(String path) async {
+    Map<String, dynamic> returnMap = {};
+    try {
+      Response response =
+          await dio.delete(path, options: Options(headers: header));
+      if (response.statusCode == 200) {
+        returnMap = response.data;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Cannot delete requested data, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     return returnMap;
   }
 }
 ```
 
+-   **Add DB helper for all db interactions**
+
+```
+// These are SQL's executed first time database creation when app is installed
+const createTableList = <String>[
+  'CREATE TABLE table_versions(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, table_name TEXT, version_number INTEGER)',
+  'CREATE TABLE user_types(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, type TEXT, description TEXT)',
+  'CREATE TABLE country_data(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, alpha2Code TEXT, callingCode TEXT, flag TEXT)',
+];
+// These are SQL's executed first time database creation when app is installed
+// Subsquent updates to reference data is implemented as part of reference_data.dart
+const refreshDBTables = <String>[
+  "Insert into table_versions (table_name,version_number) values ( 'table_versions', 1 )",
+  "Insert into table_versions (table_name,version_number) values ( 'user_types', 1 )",
+  "Insert into user_types (type,description) values ('USER','APP User')",
+  "Insert into user_types (type,description) values ('ADMIN','Admin User')"
+];
+
+const dbName = 'local.db';
+
+class DBHelper {
+  static final DBHelper _dbhelper = DBHelper._internal();
+
+  factory DBHelper() {
+    return _dbhelper;
+  }
+
+  DBHelper._internal();
+
+  Database? database;
+  // Creates DB when app is installed
+  Future<bool> createDB() async {
+    bool createStatus = false;
+    // Get a location using getDatabasesPath
+    try {
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, dbName);
+      // Delete the database if any
+      databaseExists(String pathParam) =>
+          databaseFactory.databaseExists(pathParam);
+      if (await databaseExists(path)) {
+        // Delete db if it exists
+        await deleteDatabase(path);
+      }
+
+      // Create the database
+      database = await openDatabase(path, version: 1,
+          onCreate: (Database db, int version) async {
+        // When creating the db, create all tables
+        for (String sql in createTableList) {
+          await db.execute(sql);
+        }
+      });
+      createStatus = true;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Creation of local DB failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+    return createStatus;
+  }
+
+  // Opens the SQL db (doesnot run on first install)
+  Future<bool> openDB() async {
+    bool openStatus = false;
+
+    try {
+      if (database == null) {
+        // Get a location using getDatabasesPath
+        var databasesPath = await getDatabasesPath();
+        String path = join(databasesPath, dbName);
+        // open the database
+        database = await openDatabase(path);
+      }
+      openStatus = true;
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Database not available, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return openStatus;
+  }
+
+  // Executes Select statement on the provided table, whereParams, whereArgsParam
+  Future<List<Map<String, dynamic>>> executeSelect(String tableName,
+      String? whereParam, List<Object?>? whereArgsParam) async {
+    List<Map<String, dynamic>> returnValue = [];
+    try {
+      if (database == null) await openDB();
+
+      returnValue = await database!
+          .query(tableName, where: whereParam, whereArgs: whereArgsParam);
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Select on local DB failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return returnValue;
+  }
+
+  // Inserts a row in the provided table and map containing data to be inserted
+  Future<bool> executeInsert(
+      String tableName, Map<String, Object?> values) async {
+    int result;
+    bool success = false;
+
+    try {
+      if (database == null) openDB();
+
+      result = await database!.insert(
+        tableName,
+        values,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      if (result != 0) {
+        success = true;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Insert into local DB failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return success;
+  }
+
+  // Use for raw inserts, this is primarily used to populate reference data tables
+  Future<bool> rawInsert(String sql) async {
+    int result;
+    bool success = false;
+
+    try {
+      if (database == null) openDB();
+
+      result = await database!.rawInsert(sql);
+      if (result > 0) {
+        success = true;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Insert into local DB failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return success;
+  }
+}
+
+```
+
 -   **Form widget with input fields in top to down CRUD view**
 
 ```
-// Form helps keep all related user input fields together as a form which can be validated as
-// a single entity and if all well then initiate controller method which encapsulates server communication
+
+// Mockserver URL
+const avatarURL =
+    'https://media.istockphoto.com/vectors/user-icon-flat-isolated-on-white-background-user-symbol-vector-vector-id1300845620?b=1&k=20&m=1300845620&s=170667a&w=0&h=JbOeyFgAc6-3jmptv6mzXpGcAd_8xqkQa_oUK2viFr8=';
+
+// Note Profile is a Stateless widget, all vars and logic is delegated to the respective Controller
+class Profile extends StatelessWidget {
+  Profile({Key? key, required this.userProfileModel}) : super(key: key);
+  final UserProfileModel userProfileModel;
+
+  final profileController = Get.put(UserProfileController());
+
+  @override
+  Widget build(BuildContext context) {
+    // Decide the mode based on if userProfile id exists or not
+    // Update the profileController vars with the passed userProfile data
+    profileController.profileModel.value = userProfileModel;
+    if ((userProfileModel.id ?? '') == '') {
+      profileController.profileMode = ProfileMode.create.obs;
+    } else {
+      profileController.nameController.text = userProfileModel.userName ?? '';
+      profileController.contactNumberController.text =
+          userProfileModel.contactNumber ?? '';
+      profileController.pincodeController.text = userProfileModel.pinCode ?? '';
+      profileController.dob.value =
+          userProfileModel.dateOfBirth ?? DateTime(2000);
+      profileController.countrySelected.value =
+          userProfileModel.contactCountry ?? 'IN';
+      profileController.profileMode = ProfileMode.update.obs;
+    }
+    // Get the screen width to align and size Widgets
+    profileController.screenWidth.value = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'User Profile',
+          style: TextStyle(fontSize: 14),
+        ),
+        actions: [
+          if (profileController.profileMode.value == ProfileMode.update)
+            IconButton(
+                onPressed: () {
+                  profileController.deleteUserProfile();
+                },
+                icon: const Icon(Icons.delete))
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: SingleChildScrollView(
+          child: Center(
+              child: Form(
+            key: profileController.formKey.value,
+            child: Obx(
+              () => Column(children: [
+                InkWell(
+                  child: (profileController.imagePath.value == '' ||
+                          (profileController.imagePath.value
+                                  .substring(0, 4)
+                                  .toLowerCase() ==
+                              'http'))
+                      ? CircleAvatar(
+                          radius: 50.0,
+                          backgroundImage:
+                              //  FileImage(io.File(profileController.imagePath.value)),
+                              (profileController.imagePath.value == '')
+                                  ? const NetworkImage(avatarURL)
+                                  : NetworkImage(
+                                      profileController.imagePath.value),
+                          backgroundColor: Colors.transparent,
+                        )
+                      : CircleAvatar(
+                          radius: 50.0,
+                          backgroundImage: FileImage(
+                              io.File(profileController.imagePath.value)),
+                          backgroundColor: Colors.transparent,
+                        ),
+                  onTap: () => profileController.selectAvatarPicture(),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: profileController.screenWidth * 90 / 100,
+                  height: 30,
+                  child: TextFormField(
+                      validator: (value) {
+                        if ((value ?? '') == '') {
+                          return 'Please enter full name';
+                        }
+                        return null;
+                      },
+                      controller: profileController.nameController,
+                      decoration: const InputDecoration(
+                          hintText: 'Full Name',
+                          hintStyle: TextStyle(fontSize: 14))),
+                ),
+                const SizedBox(height: 5),
+                CountryDropdown(
+                    value: userProfileModel.contactCountry ?? 'IN',
+                    valueSelected: profileController.countrySelected),
+                const SizedBox(height: 5),
+                SizedBox(
+                    child: TextFormField(
+                  controller: profileController.contactNumberController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                      hintText: 'Contact Number',
+                      hintStyle: TextStyle(fontSize: 14)),
+                  validator: (value) {
+                    if ((value ?? '') == '') {
+                      return 'Please enter contact number';
+                    }
+
+                    int? contact = int.tryParse(value ?? '');
+                    if (contact == null) {
+                      return 'Please enter numbers only';
+                    }
+
+                    return null;
+                  },
+                )),
+                const SizedBox(height: 5),
+                SizedBox(
+                    child: TextFormField(
+                  controller: profileController.pincodeController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                      hintText: 'Pin Code', hintStyle: TextStyle(fontSize: 14)),
+                  validator: (value) {
+                    return null;
+                  },
+                )),
+                const SizedBox(height: 5),
+                SizedBox(
+                    child: DateTimePicker(
+                  initialValue:
+                      profileController.dob.value.toLocal().toString(),
+                  style: const TextStyle(fontSize: 14),
+                  initialDate: profileController.dob.value,
+                  firstDate: DateTime(1920),
+                  lastDate: DateTime(2020),
+                  dateLabelText: 'Date of Birth',
+                  onChanged: (val) => profileController.dob.value =
+                      DateTime.parse(val).toLocal(),
+                  validator: (val) {
+                    var now = DateTime.now();
+                    if ((val ?? '') == '') {
+                      return 'Please enter date of birth';
+                    }
+                    if (DateTime.parse(val ?? '').toLocal().isAfter(now)) {
+                      return 'Please enter date earlier than 2021';
+                    }
+                    return null;
+                  },
+                  onSaved: (val) => profileController.dob.value =
+                      DateTime.parse(val ?? '').toLocal(),
+                )),
+                const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          decoration: const BoxDecoration(color: Colors.blue),
+                          child: Container(
+                              height: 50,
+                              width: 150,
+                              decoration:
+                                  const BoxDecoration(color: Colors.blue),
+                              child: const Center(
+                                child: Text('Save',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white)),
+                              )),
+                        ),
+                        onTap: () async => await profileController
+                            .createOrUpdateUserProfile()),
+                    InkWell(
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          decoration: const BoxDecoration(color: Colors.blue),
+                          child: const Center(
+                              child: Text('Cancel',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white))),
+                        ),
+                        onTap: () => Get.back())
+                  ],
+                )
+              ]),
+            ),
+          )),
+        ),
+      ),
+    );
+  }
+}
+
 ```
+
+-   **Add Reference data refresh class which implements methods related to reference data creation and refresh**
+
+```
+const newTableList = <Map<String, String>>[
+  // Uncomment below to test addition of new reference data table named test_table
+  // {
+  //   'test_table':
+  //       'Create table test_table (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,column_text TEXT, column_int INTEGER)'
+  // }
+];
+
+// Manages reference data creation and updates when the data changes on backend
+class ReferenceData {
+  //
+  Future<bool> firstTimeInsert() async {
+    bool result = false;
+    try {
+      for (String insertSQL in refreshDBTables) {
+        result = await DBHelper().rawInsert(insertSQL);
+        if (!result) {
+          break;
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Insert into local DB failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      result = false;
+    }
+    return result;
+  }
+
+  // Refreshes local DB table data
+  Future<bool> updateNewTableVersions() async {
+    bool status = true;
+
+    try {
+      await createNewTables();
+
+      List<Map<String, dynamic>> dbData =
+          await DBHelper().executeSelect("table_versions", null, null);
+      if (dbData.isNotEmpty) {
+        //print('dbData : $dbData');
+        var apiData = await ApiHelper().get(baseURL + '/table_versions');
+        if ((apiData['status'] ?? false) && apiData['data'] is List<dynamic>) {
+          for (var dbTableRow in dbData) {
+            String tableName = dbTableRow['table_name'];
+            for (var apiDataRow in apiData['data']) {
+              if (apiDataRow['table_name'] == tableName) {
+                if (apiDataRow['version_number'] !=
+                    dbTableRow['version_number']) {
+                  if (status) {
+                    status = await refreshTable(tableName);
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: 'Refresh of table_versions failed, please try later',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        status = false;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Refresh of table_versions failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      status = false;
+    }
+    return status;
+  }
+
+  Future<bool> refreshTable(String tableName) async {
+    bool returnValue = true;
+    var result = await ApiHelper().get(baseURL + '/' + tableName);
+    if (result is Map<String, dynamic>) {
+      if (result['status'] ?? false) {
+        try {
+          DBHelper().database?.rawDelete('Delete from $tableName');
+          if (result['data'] is List<dynamic>) {
+            for (var row in result['data']) {
+              String end = '';
+              String insert = 'Insert into $tableName (';
+              row.forEach((key, value) {
+                insert += '$key,';
+                end += "'$value',";
+              });
+              insert = insert.substring(0, insert.length - 1);
+              end = end.substring(0, end.length - 1);
+              insert = '$insert) values ($end)';
+
+              if ((await DBHelper().database?.rawInsert(insert) ?? 0) < 0) {
+                returnValue = false;
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          Fluttertoast.showToast(
+              msg: 'Refresh of table failed, please try later',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          returnValue = false;
+        }
+      }
+    }
+    return returnValue;
+  }
+
+  // Checks if there any new table added to reference data list.
+  // Creates the new table as well inserts row in table_versions with version number 1
+  Future<void> createNewTables() async {
+    var dbHelper = DBHelper();
+
+    if (newTableList.isNotEmpty) {
+      if (await dbHelper.openDB()) {
+        for (Map table in newTableList) {
+          table.forEach((key, value) async {
+            // Create new table
+            await dbHelper.database?.execute(value);
+            // Insert row in table versions table
+            await dbHelper.executeInsert(
+                'table_versions', {'table_name': key, 'version_number': 1});
+          });
+        }
+      }
+    }
+  }
+}
+
+```
+
+-   **Add Country Manager which provides Country Data**
+
+```
+// Country Model
+const flagCDN = 'https://flagcdn.com/w20';
+
+// Holds country data.
+class CountryModel {
+  String name;
+  String alpha2Code;
+  String callingCode;
+  String flag;
+  CountryModel(
+      {required this.alpha2Code,
+      required this.callingCode,
+      required this.flag,
+      required this.name});
+  factory CountryModel.fromJson(Map<String, dynamic>? json) => CountryModel(
+      alpha2Code: json?["alpha2Code"],
+      callingCode: (json?["callingCodes"] ?? ['0']).first ?? '0',
+      flag: "$flagCDN/${json?['alpha2Code'].toLowerCase()}.jpg",
+      name: json?["name"]);
+
+  Map<String, dynamic> toJson() => {
+        "alpha2code": alpha2Code,
+        "callingCode": callingCode,
+        "flag": flag,
+        "name": name
+      };
+}
+
+
+// Country Manager
+// API that provides country data in JSON format
+const countryURL = 'https://restcountries.com/v2/all';
+
+class CountryManager {
+  List<CountryModel> countryList = <CountryModel>[];
+
+  // Calls Country API and populates countryList var and
+  // inserts data in Country table. Expected to be executed on first run only
+  Future<bool> fetchCountryData() async {
+    bool status = false;
+    ApiHelper apiHelper = ApiHelper();
+    try {
+      var data = await apiHelper.get(countryURL);
+      if (data != null) {
+        if (data is List<dynamic>) {
+          // Clear countryList var
+          countryList = [];
+          for (var countryData in data) {
+            countryList.add(CountryModel.fromJson(countryData));
+            // Adding the last entry each time as the new element
+            // is added to the last of the list in above statement
+
+            status = await DBHelper()
+                .executeInsert('country_data', countryList.last.toJson());
+            if (!status) return false;
+          }
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Fetch country data failed, please try later',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    return status;
+  }
+
+  // Retrieves the country data from the SQL db and populates countryData var
+  Future<bool> getCountryData() async {
+    bool status = true;
+
+    DBHelper dbHelper = DBHelper();
+    if (countryList.isEmpty) {
+      try {
+        var countryData =
+            await dbHelper.executeSelect('country_data', null, null);
+
+        for (var country in countryData) {
+          countryList.add(CountryModel(
+            alpha2Code: country["alpha2Code"],
+            callingCode: country["callingCode"],
+            flag: country["flag"],
+            name: country["name"],
+          ));
+        }
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: 'Get country data failed, please try later',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        status = false;
+      }
+    }
+    return status;
+  }
+
+  // Returns the country list from local cache if available else
+  // queries the db to get the data
+  Future<List<CountryModel>> getCountryList() async {
+    if (countryList.isEmpty) {
+      await getCountryData();
+    }
+    return countryList;
+  }
+}
+
+```
+
+-   **Create Country Drop Down widget**
+
+```
+// Common Coountry drop down widget which could be re-used across app
+class CountryDropdown extends StatefulWidget {
+  // Parent method to be called on update of Country
+  final Function valueSelected;
+  // Prexisting value (in update mode) to be selected
+  final String? value;
+
+  const CountryDropdown({
+    Key? key,
+    required this.valueSelected,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  _CountryDropdownState createState() => _CountryDropdownState();
+}
+
+class _CountryDropdownState extends State<CountryDropdown> {
+  // Prexisting value (in update mode) to be selected
+  String _value = '';
+  bool dataLoaded = false;
+  List<CountryModel> countries = [];
+  List<DropdownMenuItem<String>> menuItemList = [];
+
+  CountryManager countryManager = CountryManager();
+  @override
+  void initState() {
+    super.initState();
+
+    buildMenuItems();
+
+    _value = widget.value ?? 'IN';
+  }
+
+  void buildMenuItems() async {
+    if (await countryManager.getCountryData()) {
+      countries = await countryManager.getCountryList();
+    } else {
+      Fluttertoast.showToast(
+          msg: "Get Country Data failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+    for (var country in countries) {
+      menuItemList.add(
+        DropdownMenuItem(
+          value: country.alpha2Code,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * .8,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: Image(image: NetworkImage(country.flag))),
+                      const SizedBox(width: 10),
+                      Text(
+                        (country.name.length > 28)
+                            ? country.name.substring(0, 25) + '...'
+                            : country.name,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    country.callingCode,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ]),
+          ),
+        ),
+      );
+    }
+    dataLoaded = true;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return (dataLoaded)
+        ? Container(
+            width: MediaQuery.of(context).size.width * .9,
+            child: DropdownButton<String>(
+              items: menuItemList,
+              onChanged: (value) {
+                if (mounted) {
+                  setState(() {
+                    if (_value != value) {
+                      _value = value ?? '';
+                      widget.valueSelected(_value);
+                    }
+                  });
+                }
+              },
+              value: _value,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 5),
+          )
+        : const SpinKitFadingCircle(color: Colors.black);
+  }
+}
+
+```
+
+**That's it folks!!!**
