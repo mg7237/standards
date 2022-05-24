@@ -41,6 +41,9 @@
 5. After this, the version will be available in testflight.
 6. Testing group will be auto selected, if selected in previous build or select by yourself.
 7. Add promotional text.
+
+!> Make sure to update latest screenshots if new feature released with the application and impacts the existing screenshots.
+
 8. Add what's new.
 9. Add/Update sign-in info.
 10. Select new version in **Build**
