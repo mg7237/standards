@@ -10,4 +10,5 @@ Website : _https://flutter.dev/_
 1.  [Coding Standards](/coding-standards)
 1.  [Code Metrics](/code-metrics)
 1.  [Getx State Management](/getx)
+1.  [Flutter Dev Tools](/dev-tools)
 1.  [Flutter Cheat Sheet](/cheat-sheet)

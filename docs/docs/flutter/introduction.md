@@ -13,11 +13,11 @@ More details at https://flutter.dev/
 
 **Checkout** :
 
-1.  [Topics](/)
 1.  [Introduction](/introduction)
 1.  [Learn Dart](/learn-dart)
 1.  [Learn Flutter](/learn-flutter)
 1.  [Coding Standards](/coding-standards)
 1.  [Code Metrics](/code-metrics)
 1.  [Getx State Management](/getx)
+1.  [Flutter Dev Tools](/dev-tools)
 1.  [Flutter Cheat Sheet](/cheat-sheet)
