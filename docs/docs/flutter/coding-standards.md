@@ -150,7 +150,7 @@ Path path = Path()
 
 ### Expression Functions
 
-For functions that contain just one expression, you can use an expression function. The `=>` (arrow) notation is used for expression function which is more concide and cleaner implementation.
+For functions that contain just one expression, you can use an expression function. The `=>` (arrow) notation is used for expression function which is more concise and cleaner implementation.
 
 ```
 get width => right - left; // Instead of: get width () {right -left;}

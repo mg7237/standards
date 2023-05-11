@@ -8,4 +8,4 @@
 -   [Flutter Dev Tools](/dev-tools)
 -   [Flutter Cheat Sheet](/cheat-sheet)
 
-<footer id="mb-footer"></footer>
+<!-- <footer id="mb-footer"></footer> -->

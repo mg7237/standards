@@ -1,10 +1,11 @@
 # iOS
+
 ## Configuration
 
-1. **Runner.xcodeproj** file 
+1. **Runner.xcodeproj** file
     - Select **TARGETS**.
     - Go to the **Singning & Capabilities** tab.
-    - Select a team **"Saarthi Pedagogy Private Limited"** and choose **automatically manage signin**.
+    - Select a team **"AceNet Consulting Private Limited"** and choose **automatically manage signin**.
 
 ## Build
 
@@ -30,7 +31,6 @@
     1. Change other versions latest & active status as per requirements.
 4. If any version needs to be put under maintenance then mark specific version accordingly.
 5. If whole app needs to be out under maintanance then mark whole app in maintenance.
-
 
 ## Release on App store
 

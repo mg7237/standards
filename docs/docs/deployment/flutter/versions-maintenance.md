@@ -4,7 +4,7 @@ The Maintenance Web Panel is used to manage the **Versioning** and **Maintenance
 
 ?> The Applications and Versions maintained in the Maintenance Panel are centrally shared between all micro-services (API servers). API services use the maintenance and versions data to authenticate and handle the API requests coming from all the User Platforms.
 
-Link to Web Panel : https://maintenance.saarthipedagogy.com
+Link to Web Panel : https://maintenance.acenet.io
 
 !> Don't **abuse** the **maintenance** & **versioning** features. It is very important that we handle all platforms without affecting live users.
 
@@ -78,6 +78,7 @@ Review Version should be a single Version which will be sent to the respective a
 Turn Specific Application’s Specific Version’s review Mode On/Off by clicking the Switch in front of version name, in Versions List Screen.
 
 ![Version Current Image](assets/review.png)
+
 ### Current Version
 
 Current Version is a single Version which is live in production (latest) of the specific application.

@@ -22,7 +22,7 @@
 1. CI/CD using GitHub Actions
 1. GitHub Packages
 
-## Saarthi Pedagogy at GitHub
+## AceNet at GitHub
 
-Saarthi Pedagogy uses GitHub for as its VCS and SCM.  
-Organization Link : https://github.com/saarthi-pedagogy/
+AceNet uses GitHub for as its VCS and SCM.  
+Organization Link : https://github.com/acenet/

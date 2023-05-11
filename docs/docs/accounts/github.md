@@ -4,8 +4,8 @@
 
 For working on the projects at Saarthi Pedagogy, you must create a new GitHub account using your official company email.
 
-1. Create account wiht your officcial email `[yourname]@saarthipedagogy.com`.
-2. Your username should be in format of `saarthi-[firstname]-[lastname]`.
+1. Create account with your official email `[yourname]@acenet.io`.
+2. Your username should be in format of `acenet-[firstname]-[lastname]`.
 3. You can enable Two Factor Authentication for more security.
 4. Link your Office PC's SSH Key with your Github Account. (As Described in Installation Docs)
 
