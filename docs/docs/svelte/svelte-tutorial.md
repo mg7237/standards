@@ -5,7 +5,7 @@ Checkout Svelte Tutorial here : https://svelte.dev/tutorial
 > A very interesting thing about Svelte is, they made a great `interactive programming tutorial` which covers all the features of Svelte. You don't need to do any `Online Courses` to learn Svelte. It is all in their webiste. Easy to learn.
 
 ?> Interactive Programming is the best way to learn Programming.<br>
-I hope one day you will build such thing for Saarthi Pedagogy.
+I hope one day you will build such thing for Groupla.
 
 ---
 

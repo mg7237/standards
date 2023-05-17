@@ -2,7 +2,7 @@
 
 ## Create GitHub Account
 
-For working on the projects at Saarthi Pedagogy, you must create a new GitHub account using your official company email.
+For working on the projects at Groupla, you must create a new GitHub account using your official company email.
 
 1. Create account with your official email `[yourname]@acenet.io`.
 2. Your username should be in format of `acenet-[firstname]-[lastname]`.
@@ -13,7 +13,7 @@ For working on the projects at Saarthi Pedagogy, you must create a new GitHub ac
 
 For submitting your code for all the projects you are working on, you will need access to project Repositories. To get access to Repositories, contact your Manager.
 
-## Saarthi Pedagogy at GitHub
+## Groupla at GitHub
 
-Saarthi Pedagogy uses GitHub for as its VCS and SCM.  
-Organization Link : https://github.com/saarthi-pedagogy/
+Groupla uses GitHub for as its VCS and SCM.  
+Organization Link : https://github.com/groupla/
